@@ -7,7 +7,7 @@ import assert from './util/assert'
 import boundary from './util/boundary'
 import luminance from './util/luminance'
 import average from './util/average'
-import { RGBtoHSV, HSVtoRGB } from './util/conversion'
+import { RGBtoHSV, HSVtoRGB, RGBtoHSL, HSLtoRGB } from './util/conversion'
 
 const WHITE = [ 255, 255, 255, 1 ]
 
@@ -137,26 +137,18 @@ const proto = {
     return this.rotate(180)
   },
 
-  // Factor RGB
-  darken(factor) {
-    const [ r, g, b, a ] = this.data
-    const val = boundary(factor, 0, 1)
-    return createColor([
-      ...[ r, g, b ].map(x => Math.floor(
-        boundary(x - x * val)
-      )),
-      a
-    ])
+
+  darken(percentage) {
+    const [h, s, v, a ] = RGBtoHSV(this.data);
+    const delta = v * percentage;
+    const darkenedHSVA = [ h, s, boundary(v - delta, 0, 1), a];
+    return createColor(HSVtoRGB(darkenedHSVA));
   },
-  lighten(factor) {
-    const [ r, g, b, a ] = this.data
-    const val = boundary(factor, 0, 1)
-    return createColor([
-      ...[ r, g, b ].map(x => Math.floor(
-        boundary(x + (255 - x) * val)
-      )),
-      a
-    ])
+
+  lighten(percentage) {
+    const [h, s, l, a ] =  RGBtoHSL(this.data);
+    const lightenedHSLA = [ h, s, boundary(l * (1 + percentage), 0, 100), a];
+    return createColor(HSLtoRGB(lightenedHSLA));
   },
 
   // Luminance http://www.w3.org/TR/WCAG20/#relativeluminancedef
@@ -302,4 +294,3 @@ export default function Color(init) {
 
 // Check whether an object is a Color
 Color.is = obj => typeof obj === 'object' && proto.isPrototypeOf(obj)
-

@@ -76,11 +76,18 @@ describe('Color', () => {
       .toEqual([ 5, 10, 15, 1 ])
   })
 
+  it('.darken(yellow)', () => {
+    const color = Color('#DEFF29');
+
+    expect(color.darken(0.03).raw())
+      .toEqual([ 215, 247, 40, 1 ])
+  })
+
   it('.lighten()', () => {
     const color = Color([ 10, 20, 30, 1 ])
 
     expect(color.lighten(0.5).raw())
-      .toEqual([ 132, 137, 142, 1 ])
+      .toEqual([ 15, 30, 45, 1 ])
   })
 
   it('.mix()', () => {
@@ -115,4 +122,3 @@ describe('Color', () => {
     expect(Color.is(obj)).toBeFalsy()
   })
 })
-
