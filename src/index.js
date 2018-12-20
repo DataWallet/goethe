@@ -231,7 +231,11 @@ const proto = {
     } else if (mode === 'keyword') {
       return to.keyword(this.data)
     } else if (mode === 'hsl') {
-      return to.hsl(this.data)
+      const data = RGBtoHSL(this.data);
+      data[0] *= 360;
+      data[1] *= 100;
+      data[2] *= 100;
+      return to.hsl(data);
     }
 
     return to.rgb(this.data)
